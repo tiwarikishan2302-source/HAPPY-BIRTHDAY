@@ -1,0 +1,135 @@
+<!doctype html>
+<html lang="hi">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Happy Birthday — SENU MUMMY ✨</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;600;800&family=Great+Vibes&display=swap" rel="stylesheet">
+  <style>
+    :root{--bg:#050417;--card:#0d1220;--gold:#ffd166;--muted:#cbd5e1}
+    html,body{height:100%;margin:0;font-family:'Poppins',system-ui,Segoe UI,Roboto,Arial;color:white}
+    body{background:radial-gradient(circle at 20% 10%, rgba(255,200,70,0.04), transparent 6%), linear-gradient(180deg,#050417,#081426);display:grid;place-items:center}
+    .wrap{width:min(980px,96%);position:relative}
+    .card{background:linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));border-radius:20px;padding:28px 26px;box-shadow:0 20px 60px rgba(2,6,23,0.7);text-align:center;overflow:hidden;position:relative}
+    h1{font-size:50px;margin:8px 0 2px;font-weight:800}
+    .script{font-family:'Great Vibes',cursive;font-size:40px;color:var(--gold);display:block}
+    .name{font-weight:900;font-size:44px;letter-spacing:2px;margin-top:8px}
+    .sub{color:var(--muted);margin-top:10px;font-size:17px}
+    .btn{margin-top:16px;padding:10px 14px;border-radius:10px;border:1px solid rgba(255,255,255,0.08);background:transparent;color:#fff;cursor:pointer}
+    #fx{position:absolute;left:0;top:0;width:100%;height:100%;pointer-events:none}
+    .smile{width:96px;height:96px;border-radius:50%;display:inline-flex;align-items:center;justify-content:center;margin-top:18px;background:linear-gradient(180deg,#fff,#ffdede);box-shadow:0 6px 20px rgba(0,0,0,0.4)}
+    .smile svg{width:72px;height:72px}
+    .credit{position:absolute;right:12px;bottom:12px;font-size:12px;color:rgba(255,255,255,0.45)}
+    @media (max-width:520px){h1{font-size:30px}.script{font-size:24px}.name{font-size:26px}}
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <div class="card" id="card">
+      <canvas id="fx"></canvas>
+
+      <div style="position:relative;z-index:6">
+        <div style="font-weight:700;color:#ffd166;letter-spacing:0.8px">Diwali + Birthday Surprise</div>
+        <h1>Happy Birthday</h1>
+        <span class="script">Roshni, khushiyan aur pyar ke saath</span>
+        <div class="name">SENU MUMMY</div>
+        <p class="sub">Aapka din roshan ho — aaj ke pal hamesha yaad rahein. ❤️</p>
+
+        <div class="smile" title="Smile for Senu">
+          <!-- simple smile SVG -->
+          <svg viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg">
+            <circle cx="32" cy="32" r="30" fill="#fff"/>
+            <circle cx="22" cy="24" r="4" fill="#333"/>
+            <circle cx="42" cy="24" r="4" fill="#333"/>
+            <path d="M20 40c4 6 20 6 28 0" stroke="#333" stroke-width="3" stroke-linecap="round" fill="none"/>
+          </svg>
+        </div>
+
+        <div>
+          <button class="btn" id="sparkBtn">Fireworks phod do 🎆</button>
+          <button class="btn" id="downloadBtn">Download HTML</button>
+        </div>
+      </div>
+
+      <div class="credit">Made with pyaar ✨</div>
+    </div>
+  </div>
+
+  <script>
+    // Fireworks / Diwali effect on canvas
+    const canvas = document.getElementById('fx');
+    const ctx = canvas.getContext('2d');
+    const card = document.getElementById('card');
+    let W, H;
+    function resize(){W = canvas.width = card.clientWidth; H = canvas.height = card.clientHeight}
+    window.addEventListener('resize', resize);
+    resize();
+
+    function rand(a,b){return Math.random()*(b-a)+a}
+
+    // firework rockets that launch up and explode into particles
+    class Rocket{
+      constructor(){
+        this.x = rand(W*0.15, W*0.85);
+        this.y = H + 10;
+        this.vx = rand(-1.2,1.2);
+        this.vy = rand(-7.5,-9.5);
+        this.size = rand(2,3);
+        this.hue = Math.floor(rand(0,360));
+        this.exploded = false;
+        this.trail = [];
+      }
+      update(){
+        this.trail.push({x:this.x,y:this.y}); if(this.trail.length>8)this.trail.shift();
+        this.vy += 0.12; this.x += this.vx; this.y += this.vy;
+        if(this.vy >= -1.5 && !this.exploded){ this.explode(); this.exploded = true }
+      }
+      explode(){
+        for(let i=0;i<40;i++){ particles.push(new Particle(this.x,this.y,this.hue)) }
+      }
+      draw(){ ctx.beginPath(); ctx.fillStyle = `hsl(${this.hue} 80% 60%)`; ctx.arc(this.x,this.y,this.size,0,Math.PI*2); ctx.fill();
+        // trail
+        for(let i=0;i<this.trail.length;i++){ const t=this.trail[i]; ctx.fillStyle = `rgba(255,255,255,${i/this.trail.length*0.12})`; ctx.fillRect(t.x-1,t.y-1,2,2) }
+      }
+    }
+
+    class Particle{
+      constructor(x,y,hue){
+        this.x=x; this.y=y; this.vx = rand(-4,4); this.vy = rand(-4,4); this.alpha=1; this.dec = rand(0.008,0.02); this.size = rand(1.6,3.6); this.hue = hue + rand(-30,30);
+      }
+      update(){ this.vy += 0.04; this.x += this.vx; this.y += this.vy; this.alpha -= this.dec }
+      draw(){ ctx.globalAlpha = Math.max(this.alpha,0); ctx.fillStyle = `hsl(${this.hue} 85% 60%)`; ctx.beginPath(); ctx.arc(this.x,this.y,this.size,0,Math.PI*2); ctx.fill(); ctx.globalAlpha = 1 }
+    }
+
+    let rockets = [];
+    let particles = [];
+
+    function loop(){ ctx.clearRect(0,0,W,H);
+      // slight glow background to mimic Diwali lights
+      ctx.fillStyle = 'rgba(0,0,0,0)'; ctx.fillRect(0,0,W,H);
+
+      for(let i=rockets.length-1;i>=0;i--){ rockets[i].update(); rockets[i].draw(); if(rockets[i].y < -40 || rockets[i].exploded) rockets.splice(i,1) }
+      for(let i=particles.length-1;i>=0;i--){ particles[i].update(); particles[i].draw(); if(particles[i].alpha<=0) particles.splice(i,1) }
+
+      requestAnimationFrame(loop);
+    }
+    loop();
+
+    // auto-launch a few fireworks for surprise
+    function launchMany(n=5){ for(let i=0;i<n;i++){ setTimeout(()=>{ rockets.push(new Rocket()) }, i*350) } }
+    setTimeout(()=>{ launchMany(6) }, 600);
+
+    document.getElementById('sparkBtn').addEventListener('click', ()=>{ launchMany(8) })
+
+    // Download the page as HTML
+    document.getElementById('downloadBtn').addEventListener('click', ()=>{
+      const html = '<!doctype html>' + document.documentElement.outerHTML;
+      const blob = new Blob([html],{type:'text/html'});
+      const url = URL.createObjectURL(blob); const a = document.createElement('a'); a.href=url; a.download = 'senu-mummy-diwali-birthday.html'; document.body.appendChild(a); a.click(); URL.revokeObjectURL(url); a.remove();
+    });
+
+    // Resize observer to keep canvas synced
+    const ro = new ResizeObserver(()=>{ resize() }); ro.observe(card);
+  </script>
+</body>
+</html>
